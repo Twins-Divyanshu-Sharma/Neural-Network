@@ -6,8 +6,8 @@
 class Layer
 {
 private:
-    Vec *out, *dout;
-    Mat *m, *dm;
+    Vec out, dout;
+    Mat m, dm;
 public:
     Layer(int i, int o);
 };
