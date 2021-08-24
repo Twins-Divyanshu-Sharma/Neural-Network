@@ -19,7 +19,6 @@
 
 Vec::Vec(int size)
 {
-    std::cout <<"ctr" << std::endl;
     this->size = size;
     data = new float[size];
     for(int i=0; i<size; i++)
@@ -28,13 +27,11 @@ Vec::Vec(int size)
 
 Vec::~Vec()
 {
-    std::cout << "dtr" << std::endl;
     delete [] data;
 }
 
 Vec::Vec(Vec& vec)
 {
-    std::cout << "cpy" << std::endl;
     size = vec.size;
     data = new float[size];
     for(int i=0; i<size; i++)
@@ -43,7 +40,6 @@ Vec::Vec(Vec& vec)
 
 Vec::Vec(Vec&& vec)
 {
-    std::cout << "mv" << std::endl;
     size = vec.size;
     data = vec.data;
     vec.data = nullptr;   
@@ -51,7 +47,6 @@ Vec::Vec(Vec&& vec)
 
 Vec& Vec::operator=(Vec& vec)
 {
-    std::cout << "=" << std::endl;
     size = vec.size;
     data = new float[size];
     for(int i=0; i<size; i++)
@@ -67,7 +62,6 @@ Vec& Vec::operator=(Vec&& vec)
     // we know that vec is going to be deleted so we point vec.data to content of this->data
     // this we compiler will delete previous data while deleting vec and we dont have to bother
 
-    std::cout << "mv =" << std::endl;
     this->size = vec.size;
     float* toDelete = this->data;
     data = vec.data;
@@ -87,7 +81,7 @@ float& Vec::operator[](int i)
 
 Vec operator+(Vec& a, Vec& b)
 {
-    std::cout << "l+l" << std::endl;
+
     if(a.size != b.size)
     {   
         std::cerr<<"cannot add !! size not same"<<std::endl;
@@ -103,7 +97,6 @@ Vec operator+(Vec& a, Vec& b)
  
 Vec operator+(Vec& a, Vec&& b)
 {
-    std::cout << "l+r" << std::endl;
     if(a.size != b.size)
     {   
         std::cerr<<"cannot add !! size not same"<<std::endl;
@@ -118,7 +111,6 @@ Vec operator+(Vec& a, Vec&& b)
  
 Vec operator+(Vec&& a, Vec& b)
 {
-    std::cout << "r+l" << std::endl;
     if(a.size != b.size)
     {   
         std::cerr<<"cannot add !! size not same"<<std::endl;
@@ -133,7 +125,6 @@ Vec operator+(Vec&& a, Vec& b)
  
 Vec operator+(Vec&& a, Vec&& b)
 {
-    std::cout << "r+r" << std::endl;
     if(a.size != b.size)
     {   
         std::cerr<<"cannot add !! size not same"<<std::endl;
