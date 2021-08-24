@@ -17,7 +17,34 @@
  */
 #include "NeuralNetwork.h"
 
-Layer::Layer(int i, int o):out(o),dout(o),m(o,i),dm(o,i)
+Layer::Layer(int i, int o) : out(o), dout(o), m(o,i), dm(o,i) {}
+
+int Layer::getVecSize()
 {
-    std::cout << "cool : " << m[0][0] << std::endl;
+    return out.getSize();
 }
+
+FNN::FNN(int r, int c) : input(r*c) { std::cout<<"cnst"<<std::endl;}
+
+FNN::FNN(int i) : input(i) {std::cout<<"cnst"<<std::endl;}
+
+FNN FNN::operator+(int outSize)
+{
+    int inSize = 0;
+    if(layers.size() == 0)
+    {
+       inSize = input.getSize(); 
+    }
+    else
+    {
+        inSize = layers.back().getVecSize();
+    }
+    
+    layers.push_back(Layer(inSize,outSize));
+    
+    return *this;
+}
+
+
+
+

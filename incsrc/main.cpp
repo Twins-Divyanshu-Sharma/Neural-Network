@@ -2,5 +2,7 @@
 
 int main()
 { 
-  return 0;
+    FNN f(10);
+    f+10+20+30;
+    return 0;
 }
