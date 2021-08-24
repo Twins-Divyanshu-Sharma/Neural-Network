@@ -83,3 +83,17 @@ void Layer::backwardPass(float(*diffActOut)(float),Vec& in,Vec& din)
         din[j] = fl;
     }
 }
+
+void Layer::halfBackwardPass(float(*diffActOut)(float),Vec& in)
+{
+     // correcting matrix
+    for(int i=0; i<m.getRow(); i++)
+    {
+        for(int j=0; j<m.getCol(); j++)
+        {
+            dm[i][j] = dout[i] * diffActOut(out[i]) * in[j];
+        }
+    }
+
+
+}
