@@ -17,6 +17,10 @@
  */
 #include "NeuralNetwork.h"
 
+int Layer::getVecSize()
+{
+    return out.getSize();
+}
 float sigmoid(float f)
 {
     return (1.0f/(1.0f + pow(EXP,-f)));
@@ -39,19 +43,82 @@ void initNormal(Mat& m)
         for(int j=0; j<m.getCol(); j++)
         {
             std::normal_distribution<float> nd(0.0, sd);
-            m[j][i] = nd(gen);
+            m[i][j] = nd(gen);
+     //       m[j][i] = 0.5f;
         }
     }
 }
 
-Layer::Layer(void(*initialize)(Mat& m),int i, int o):out(o),dout(o),m(o,i),dm(o,i)
+void (*Layer::initialize)(Mat& m) = initNormal;
+
+
+Layer::Layer()
 {
-    initialize(m);
+
 }
+
+
+Layer::Layer(int i, int o):out(o),dout(o),m(o,i),dm(o,i)
+{
+    std::cout << "layer ctr" << std::endl; 
+    initialize(m); 
+}
+
+
+Layer::Layer(const Layer& layer):out(layer.out),dout(layer.dout),m(layer.m),dm(layer.dm)
+{
+
+    std::cout << "layer copy ctr" << std::endl;
+}
+
+
+Layer::Layer(Layer&& layer): out(std::move(layer.out)),  m(std::move(layer.m)), dm(std::move(layer.dm)),dout(std::move(layer.dout)) 
+{
+  new(&layer) Layer();  
+}
+
+
 
 Layer::~Layer()
 {
+    std::cout << "layer dtr" << std::endl;
+}
 
+Layer& Layer::operator=(Layer& l)
+{
+    if(this != nullptr)
+    {
+      this->~Layer();  
+      new(this) Layer(l);
+    }
+    else
+    {
+        out = l.out;
+        dout = l.dout;
+        m = l.m;
+        dm = l.dm;
+    }
+
+    return *this;
+    
+}
+
+Layer& Layer::operator=(Layer&& l)
+{
+    if(this != nullptr)
+    {
+        this->~Layer();
+        new(this) Layer(std::move(l));
+    }
+    else
+    {
+        out = std::move(l.out);
+        dout = std::move(l.dout);
+        m = std::move(l.m);
+        dm = std::move(l.dm);
+        new(&l) Layer();
+    }
+    return *this;
 }
 
 void Layer::forwardPass(float(*act)(float),Vec& in)
@@ -95,5 +162,156 @@ void Layer::halfBackwardPass(float(*diffActOut)(float),Vec& in)
         }
     }
 
+}
 
+FNN::FNN()
+{
+
+}
+
+FNN::FNN(int r, int c) : input(r*c)
+{ 
+    std::cout<<"FNN cnst"<<std::endl;
+}
+
+FNN::FNN(int i) : input(i) 
+{
+    std::cout<<"FNN cnst"<<std::endl;
+}
+
+FNN::FNN(FNN& f) : input(f.input)
+{
+    std::cout << "FNN cpy ctr" << std::endl;
+    for(int i=0; i<f.layers.size(); i++)
+        layers.push_back(f.layers[i]);
+}
+
+FNN::FNN(FNN&& f) : input(std::move(f.input))
+{
+   std::cout << "FNN mv ctr " << std::endl;
+   layers = std::move(f.layers); 
+   new(&f) FNN();
+}
+
+FNN& FNN::operator=(FNN& fnn)
+{
+    std::cout << "FNN =" << std::endl;
+    if( this != &fnn )
+    {
+        input = fnn.input;
+        for(int i=0; i<fnn.layers.size(); i++)
+            layers.push_back(fnn.layers[i]); 
+    }
+    return *this;
+}
+
+FNN& FNN::operator=(FNN&&  fnn)
+{
+    std::cout << "FNN mv =" << std::endl;
+    if ( this != &fnn )
+    {
+        input = std::move(fnn.input);
+        layers = std::move(fnn.layers); 
+
+    }
+    new(&fnn) FNN();
+    return *this;
+}
+/* 
+FNN& FNN::operator+(int outSize)
+{
+    std::cout << "FNN + " << std::endl;
+    int inSize = 0;
+    if(layers.size() == 0)
+    {
+       inSize =input.getSize(); 
+    }
+    else
+    {
+        inSize = layers.back().getVecSize();
+    }
+    
+   layers.push_back(Layer(inSize,outSize));
+    
+    return *this;
+}
+*/
+
+FNN operator+(FNN& fnn, int outSize)
+{
+    std::cout << " l FNN + " <<outSize<< std::endl;
+    int inSize = 0;
+    if(fnn.layers.size() == 0)
+    {
+        inSize = fnn.input.getSize();
+    }
+    else
+    {
+        inSize = fnn.layers.back().getVecSize();
+    }
+
+   
+   fnn.layers.push_back((Layer(inSize,outSize)));
+
+    return fnn;
+}
+ 
+FNN operator+(FNN&& fnn, int outSize)
+{
+    std::cout << "r FNN + " << outSize<< std::endl;
+    int inSize = 0;
+    if(fnn.layers.size() == 0)
+    {
+        inSize = fnn.input.getSize();
+    }
+    else
+    {
+        inSize = fnn.layers.back().getVecSize();
+    }
+
+//    Layer *l = new Layer(inSize, outSize);
+   fnn.layers.push_back((Layer(inSize,outSize)));
+
+    return std::move(fnn);
+}
+
+void Layer::print()
+{
+    std::cout <<"\n ----- out ------"<<std::endl;
+    for(int i=0; i<out.getSize(); i++)
+        std::cout<<out[i]<<" "<<std::flush;
+
+    std::cout <<"\n ----- dout ------"<<std::endl;
+    for(int i=0; i<dout.getSize(); i++)
+        std::cout<<dout[i]<<" "<<std::flush;
+
+    std::cout <<"\n --------- m ----------"<<std::endl;
+    for(int i=0; i<m.getRow(); i++)
+    {
+        for(int j=0; j<m.getCol(); j++)
+        {
+            std::cout<<m[i][j]<<" "<<std::flush;
+        }
+        std::cout << std::endl;
+    }
+
+    std::cout <<"\n --------- dm ----------"<<std::endl;
+    for(int i=0; i<dm.getRow(); i++)
+    {
+        for(int j=0; j<dm.getCol(); j++)
+        {
+            std::cout<<dm[i][j]<<" "<<std::flush;
+        }
+        std::cout << std::endl;
+    }
+
+}
+
+void FNN::print()
+{
+    for(int i=0; i<layers.size(); i++)
+    {
+        layers[i].print();
+        std::cout<<"\n\n###############################################"<<std::endl<<std::endl;;
+    }
 }

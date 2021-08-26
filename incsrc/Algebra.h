@@ -11,8 +11,9 @@ class Vec
 
     public:
         
+        Vec();
         Vec(int size);
-        Vec(Vec&); // l value copy constructor
+        Vec(const Vec&); // l value copy constructor
         Vec(Vec&&); // r value copy constructor
         ~Vec();
 
@@ -47,8 +48,10 @@ class Mat
         int row, col;
 
     public:
+
+        Mat();
         Mat(int row, int col);
-        Mat(Mat&);
+        Mat(const Mat&);
         Mat(Mat&&);
         ~Mat();
         int getRow();
