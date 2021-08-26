@@ -47,7 +47,7 @@ private:
 	std::vector<Layer> layers;			
     FNN();
 public:
-    Vec input,output;
+    Vec input;
     
     FNN(int r, int c);     // insert size of input image	
     FNN(int i);
