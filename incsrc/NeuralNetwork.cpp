@@ -353,3 +353,8 @@ void FNN::backwardPassButNotInput(float(*act)(float),Vec& v)
     layers[0].halfBackwardPass(act,input);
  
 }
+
+void FNN::setMatrixRandomFunc(void(*init)(Mat&))
+{
+    Layer::initialize = init;
+}

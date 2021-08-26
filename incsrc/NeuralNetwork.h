@@ -67,7 +67,8 @@ public:
     Vec forwardPass(float(*act)(float));
     Vec backwardPass(float(*act)(float),Vec&);
     void backwardPassButNotInput(float(*act)(float),Vec&);
-  
+    
+    void setMatrixRandomFunc(void(*init)(Mat&));
 };
 
 #endif
