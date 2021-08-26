@@ -164,10 +164,8 @@ void Layer::halfBackwardPass(float(*diffActOut)(float),Vec& in)
 
 }
 
-FNN::FNN()
-{
-
-}
+FNN::FNN(Vec& v) : input(v)
+{}
 
 FNN::FNN(int r, int c) : input(r*c)
 { 
@@ -275,43 +273,83 @@ FNN operator+(FNN&& fnn, int outSize)
     return std::move(fnn);
 }
 
-void Layer::print()
+std::ostream& operator<<(std::ostream& os, Layer& l)
 {
-    std::cout <<"\n ----- out ------"<<std::endl;
-    for(int i=0; i<out.getSize(); i++)
-        std::cout<<out[i]<<" "<<std::flush;
+    os <<"\n ----- out ------"<<std::endl;
+    for(int i=0; i<l.out.getSize(); i++)
+        os<<l.out[i]<<" "<<std::flush;
 
-    std::cout <<"\n ----- dout ------"<<std::endl;
-    for(int i=0; i<dout.getSize(); i++)
-        std::cout<<dout[i]<<" "<<std::flush;
+    os <<"\n ----- dout ------"<<std::endl;
+    for(int i=0; i<l.dout.getSize(); i++)
+        os<<l.dout[i]<<" "<<std::flush;
 
-    std::cout <<"\n --------- m ----------"<<std::endl;
-    for(int i=0; i<m.getRow(); i++)
+    os <<"\n --------- m ----------"<<std::endl;
+    for(int i=0; i<l.m.getRow(); i++)
     {
-        for(int j=0; j<m.getCol(); j++)
+        for(int j=0; j<l.m.getCol(); j++)
         {
-            std::cout<<m[i][j]<<" "<<std::flush;
+            os<<l.m[i][j]<<" "<<std::flush;
         }
-        std::cout << std::endl;
+        os << std::endl;
     }
 
-    std::cout <<"\n --------- dm ----------"<<std::endl;
-    for(int i=0; i<dm.getRow(); i++)
+    os <<"\n --------- dm ----------"<<std::endl;
+    for(int i=0; i<l.dm.getRow(); i++)
     {
-        for(int j=0; j<dm.getCol(); j++)
+        for(int j=0; j<l.dm.getCol(); j++)
         {
-            std::cout<<dm[i][j]<<" "<<std::flush;
+            os<<l.dm[i][j]<<" "<<std::flush;
         }
-        std::cout << std::endl;
+        os << std::endl;
     }
-
+    return os;
 }
 
-void FNN::print()
+std::ostream& operator<<(std::ostream& os, FNN& f)
 {
-    for(int i=0; i<layers.size(); i++)
+    for(int i=0; i<f.layers.size(); i++)
     {
-        layers[i].print();
-        std::cout<<"\n\n###############################################"<<std::endl<<std::endl;;
+        os<<f.layers[i]<<std::endl;
+        os<<"\n\n###############################################"<<std::endl<<std::endl;;
     }
+
+    return os;
+}
+
+Vec FNN::forwardPass(float(*act)(float))
+{
+    layers[0].forwardPass(act, input);
+    for(int i=1; i<layers.size(); i++)
+    {
+        layers[i].forwardPass(act,layers[i-1].out);
+    }
+    return layers.back().out;
+}
+
+Vec FNN::backwardPass(float(*act)(float),Vec& v)
+{
+    int x = layers.size() -1;
+    layers.back().out = v; 
+    for(int i=x; i>0 ; i--)
+    {
+        layers[i].backwardPass(act, layers[i-1].out, layers[i-1].dout);
+    }
+    Vec dinput(input.getSize());
+    layers[0].backwardPass(act,input,dinput);
+
+    return dinput;
+}
+
+void FNN::backwardPassButNotInput(float(*act)(float),Vec& v)
+{
+  
+    int x = layers.size() -1;
+    layers.back().out = v; 
+    for(int i=x; i>0 ; i--)
+    {
+        layers[i].backwardPass(act, layers[i-1].out, layers[i-1].dout);
+    }
+
+    layers[0].halfBackwardPass(act,input);
+ 
 }
