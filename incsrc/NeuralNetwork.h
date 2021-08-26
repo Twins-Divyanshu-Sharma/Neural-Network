@@ -19,10 +19,11 @@ void initNormal(Mat& m);
 class Layer
 {
 private:
-    Vec out, dout;
     Mat m, dm;
     Layer();
+
 public:
+    Vec out, dout;
     static void (*initialize)(Mat& m);
     Layer(int i, int o);
     Layer(const Layer&);
@@ -37,26 +38,35 @@ public:
     void halfBackwardPass(float(*diffActOut)(float),Vec& in);
     int getVecSize();
 
-    void print();
+    friend std::ostream& operator<<(std::ostream&,Layer&);
 };
 
 class FNN
 {
 private:
-	std::vector<Layer> layers;		
-	Vec input;
+	std::vector<Layer> layers;			
     FNN();
 public:
+    Vec input,output;
+    
     FNN(int r, int c);     // insert size of input image	
     FNN(int i);
+    FNN(Vec&);
     FNN(FNN&);
     FNN(FNN&&);
     FNN& operator=(FNN&);
     FNN& operator=(FNN&&);
+
+
    //FNN& operator+( int);    //insert size of next layer
     friend FNN operator+(FNN&&, int);
     friend FNN operator+(FNN&, int);
-    void print();
+    
+    friend std::ostream& operator<<(std::ostream&, FNN&);
+
+    Vec forwardPass(float(*act)(float));
+    Vec backwardPass(float(*act)(float),Vec&);
+    void backwardPassButNotInput(float(*act)(float),Vec&);
   
 };
 
