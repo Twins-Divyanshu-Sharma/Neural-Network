@@ -164,6 +164,11 @@ void Layer::halfBackwardPass(float(*diffActOut)(float),Vec& in)
 
 }
 
+void Layer::descend(float alpha)
+{
+    m += -alpha * dm;
+}
+
 FNN::FNN(Vec& v) : input(v)
 {}
 
@@ -329,13 +334,15 @@ Vec FNN::forwardPass(float(*act)(float))
 Vec FNN::backwardPass(float(*act)(float),Vec& v)
 {
     int x = layers.size() -1;
-    layers.back().out = v; 
+    layers.back().dout = v; 
     for(int i=x; i>0 ; i--)
     {
         layers[i].backwardPass(act, layers[i-1].out, layers[i-1].dout);
     }
     Vec dinput(input.getSize());
     layers[0].backwardPass(act,input,dinput);
+    
+    descend(); 
 
     return dinput;
 }
@@ -344,17 +351,35 @@ void FNN::backwardPassButNotInput(float(*act)(float),Vec& v)
 {
   
     int x = layers.size() -1;
-    layers.back().out = v; 
+    layers.back().dout = v; 
     for(int i=x; i>0 ; i--)
     {
         layers[i].backwardPass(act, layers[i-1].out, layers[i-1].dout);
     }
 
     layers[0].halfBackwardPass(act,input);
+
+    descend();
  
 }
 
 void FNN::setMatrixRandomFunc(void(*init)(Mat&))
 {
     Layer::initialize = init;
+}
+
+void FNN::setLearningRate(float f)
+{
+    alpha = f;
+}
+
+void FNN::descend()
+{
+   for(int i=0; i<layers.size(); i++)
+        layers[i].descend(alpha);
+}
+
+FNN::FNN()
+{
+
 }

@@ -39,6 +39,8 @@ public:
     int getVecSize();
 
     friend std::ostream& operator<<(std::ostream&,Layer&);
+
+    void descend(float alpha);
 };
 
 class FNN
@@ -46,6 +48,10 @@ class FNN
 private:
 	std::vector<Layer> layers;			
     FNN();
+    float alpha=0.15f;
+
+    void descend();
+
 public:
     Vec input;
     
@@ -65,10 +71,14 @@ public:
     friend std::ostream& operator<<(std::ostream&, FNN&);
 
     Vec forwardPass(float(*act)(float));
-    Vec backwardPass(float(*act)(float),Vec&);
-    void backwardPassButNotInput(float(*act)(float),Vec&);
+    Vec backwardPass(float(*diffAct)(float),Vec&);
+    void backwardPassButNotInput(float(*diffAct)(float),Vec&);
     
     void setMatrixRandomFunc(void(*init)(Mat&));
+
+    void setLearningRate(float);
+
+    
 };
 
 #endif
