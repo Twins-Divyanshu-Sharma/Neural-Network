@@ -17,6 +17,12 @@
  */
 #include "Algebra.h"
 
+Vec::Vec()
+{
+    this->size = 0;
+    data = nullptr;
+}
+
 Vec::Vec(int size)
 {
     this->size = size;
@@ -30,7 +36,7 @@ Vec::~Vec()
     delete [] data;
 }
 
-Vec::Vec(Vec& vec)
+Vec::Vec(const Vec& vec)
 {
     size = vec.size;
     data = new float[size];
@@ -47,8 +53,13 @@ Vec::Vec(Vec&& vec)
 
 Vec& Vec::operator=(Vec& vec)
 {
-    size = vec.size;
-    data = new float[size];
+    if(size!=vec.size)
+    {   
+        size = vec.size;
+        if(data != nullptr)
+            delete [] data;
+        data = new float[size];
+    }
     for(int i=0; i<size; i++)
         data[i] = vec.data[i];
     return *this;
@@ -244,6 +255,12 @@ Vec operator*(Vec&& vec, float f)
     return std::move(vec);
 }
 
+Mat::Mat()
+{
+    row =0; col=0;
+    data = nullptr;
+}
+
 Mat::Mat(int row,int col)
 {
     this->row = row;
@@ -273,7 +290,7 @@ Mat::~Mat()
 }
 
 
-Mat::Mat(Mat& mat)
+Mat::Mat(const Mat& mat)
 {
     this->row = mat.row;
     this->col = mat.col;
@@ -381,9 +398,26 @@ void Mat::getDimension(int& r, int& c)
 
 Mat& Mat::operator=(Mat& m)
 {
-    this->row = m.row;
-    this->col = m.col;
-
+    
+    if((row!=m.row || col!=m.col))
+    {
+        if(data != nullptr)
+        {
+           for(int i=0; i<col; i++)
+               delete [] data[i];
+           delete [] data;
+        }
+    
+         this->row = m.row;
+        this->col = m.col;
+       data = new float*[row];
+        for(int i=0; i<row; i++)
+        {
+            data[i] = new float[col];
+        }
+     
+    }
+    
     for(int i=0; i<m.row; i++)
         for(int j=0; j<m.col; j++)
             data[i][j] = m.data[i][j];
@@ -407,7 +441,7 @@ float* Mat::operator[](int i)
 {
     if(i<row && i>=0)
         return data[i];
-    else
+   else
         std::cerr<<"out of bounds exception for row no "<<i<<std::endl;
 }
 

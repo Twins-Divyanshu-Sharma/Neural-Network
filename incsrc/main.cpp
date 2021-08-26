@@ -1,8 +1,11 @@
 #include "NeuralNetwork.h"
 
 int main()
-{ 
-    FNN f(10);
-    f+10+20+30;
-    return 0;
+{
+  FNN f(2);
+    std::cout << "starts" << std::endl;
+    f = f+3+4+2;
+    std::cout << "ends" << std::endl;
+    f.print();
+  return 0; 
 }
