@@ -51,6 +51,13 @@ void initNormal(Mat& m)
 
 void (*Layer::initialize)(Mat& m) = initNormal;
 
+
+Layer::Layer()
+{
+
+}
+
+
 Layer::Layer(int i, int o):out(o),dout(o),m(o,i),dm(o,i)
 {
     std::cout << "layer ctr" << std::endl; 
@@ -65,22 +72,9 @@ Layer::Layer(const Layer& layer):out(layer.out),dout(layer.dout),m(layer.m),dm(l
 }
 
 
-Layer::Layer(Layer&& layer)//: out(std::move(layer.out)),  m(std::move(layer.m)), dm(std::move(layer.dm)),dout(std::move(layer.dout)) 
+Layer::Layer(Layer&& layer): out(std::move(layer.out)),  m(std::move(layer.m)), dm(std::move(layer.dm)),dout(std::move(layer.dout)) 
 {
-    out = std::move(layer.out);
-    dout = std::move(layer.dout);
-    m = std::move(layer.m);
-    dm = std::move(layer.dm);
-      layer.out = NULL;
-
-    layer.dout = NULL;
-    Mat w(0,0);
-   m = w;
-    dm = w;
-    std::cout << "layer move ctr " << out.getSize() << " gotSize"<< std::endl;
- //  layer.out = NULL;
-  // layer.dout = NULL;
-   
+  new(&layer) Layer();  
 }
 
 
@@ -88,6 +82,43 @@ Layer::Layer(Layer&& layer)//: out(std::move(layer.out)),  m(std::move(layer.m))
 Layer::~Layer()
 {
     std::cout << "layer dtr" << std::endl;
+}
+
+Layer& Layer::operator=(Layer& l)
+{
+    if(this != nullptr)
+    {
+      this->~Layer();  
+      new(this) Layer(l);
+    }
+    else
+    {
+        out = l.out;
+        dout = l.dout;
+        m = l.m;
+        dm = l.dm;
+    }
+
+    return *this;
+    
+}
+
+Layer& Layer::operator=(Layer&& l)
+{
+    if(this != nullptr)
+    {
+        this->~Layer();
+        new(this) Layer(std::move(l));
+    }
+    else
+    {
+        out = std::move(l.out);
+        dout = std::move(l.dout);
+        m = std::move(l.m);
+        dm = std::move(l.dm);
+        new(&l) Layer();
+    }
+    return *this;
 }
 
 void Layer::forwardPass(float(*act)(float),Vec& in)
@@ -133,6 +164,11 @@ void Layer::halfBackwardPass(float(*diffActOut)(float),Vec& in)
 
 }
 
+FNN::FNN()
+{
+
+}
+
 FNN::FNN(int r, int c) : input(r*c)
 { 
     std::cout<<"FNN cnst"<<std::endl;
@@ -152,8 +188,9 @@ FNN::FNN(FNN& f) : input(f.input)
 
 FNN::FNN(FNN&& f) : input(std::move(f.input))
 {
-    std::cout << "FNN mv ctr " << std::endl;
-    layers = std::move(f.layers); 
+   std::cout << "FNN mv ctr " << std::endl;
+   layers = std::move(f.layers); 
+   new(&f) FNN();
 }
 
 FNN& FNN::operator=(FNN& fnn)
@@ -177,6 +214,7 @@ FNN& FNN::operator=(FNN&&  fnn)
         layers = std::move(fnn.layers); 
 
     }
+    new(&fnn) FNN();
     return *this;
 }
 /* 
@@ -199,11 +237,6 @@ FNN& FNN::operator+(int outSize)
 }
 */
 
-Layer::Layer()
-{
-
-}
-
 FNN operator+(FNN& fnn, int outSize)
 {
     std::cout << " l FNN + " <<outSize<< std::endl;
@@ -217,8 +250,8 @@ FNN operator+(FNN& fnn, int outSize)
         inSize = fnn.layers.back().getVecSize();
     }
 
-    Layer *l = new Layer(inSize, outSize);
-   fnn.layers.push_back(*l);
+   
+   fnn.layers.push_back((Layer(inSize,outSize)));
 
     return fnn;
 }
@@ -237,7 +270,7 @@ FNN operator+(FNN&& fnn, int outSize)
     }
 
 //    Layer *l = new Layer(inSize, outSize);
-   fnn.layers.push_back(std::move(Layer(inSize,outSize)));
+   fnn.layers.push_back((Layer(inSize,outSize)));
 
     return std::move(fnn);
 }

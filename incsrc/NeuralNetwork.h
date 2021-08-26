@@ -21,9 +21,9 @@ class Layer
 private:
     Vec out, dout;
     Mat m, dm;
+    Layer();
 public:
     static void (*initialize)(Mat& m);
-    Layer();
     Layer(int i, int o);
     Layer(const Layer&);
     Layer(Layer&&);
@@ -45,6 +45,7 @@ class FNN
 private:
 	std::vector<Layer> layers;		
 	Vec input;
+    FNN();
 public:
     FNN(int r, int c);     // insert size of input image	
     FNN(int i);
