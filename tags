@@ -1,0 +1,126 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_EXCMD	mixed	/number, pattern, mixed, or combineV2/
+!_TAG_OUTPUT_FILESEP	slash	/slash or backslash/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PATTERN_LENGTH_LIMIT	96	/0 for no limit/
+!_TAG_PROC_CWD	/mnt/chaos/GNULinuxDevelopment/CProjects/AI/Neural-Network/	//
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	5.9.0	/p5.9.20210110.0/
+$(prog)	makefile	/^$(prog):	$(objects)$/;"	t
+EXP	incsrc/NeuralNetwork.h	/^#define EXP /;"	d
+FNN	incsrc/NeuralNetwork.cpp	/^FNN::FNN()$/;"	f	class:FNN
+FNN	incsrc/NeuralNetwork.cpp	/^FNN::FNN(FNN& f) : input(f.input)$/;"	f	class:FNN
+FNN	incsrc/NeuralNetwork.cpp	/^FNN::FNN(FNN&& f) : input(std::move(f.input))$/;"	f	class:FNN
+FNN	incsrc/NeuralNetwork.cpp	/^FNN::FNN(Vec& v) : input(v)$/;"	f	class:FNN
+FNN	incsrc/NeuralNetwork.cpp	/^FNN::FNN(int i) : input(i) $/;"	f	class:FNN
+FNN	incsrc/NeuralNetwork.cpp	/^FNN::FNN(int r, int c) : input(r*c)$/;"	f	class:FNN
+FNN	incsrc/NeuralNetwork.cpp	/^FNN::FNN(std::string path) : input(0)$/;"	f	class:FNN
+FNN	incsrc/NeuralNetwork.h	/^class FNN$/;"	c
+HH_NEURAL_NETWORK_HH	incsrc/NeuralNetwork.h	/^#define HH_NEURAL_NETWORK_HH$/;"	d
+H_AL_Z3BR0_H	incsrc/Algebra.h	/^#define H_AL_Z3BR0_H$/;"	d
+Layer	incsrc/NeuralNetwork.cpp	/^Layer::Layer()$/;"	f	class:Layer
+Layer	incsrc/NeuralNetwork.cpp	/^Layer::Layer(Layer&& layer): out(std::move(layer.out)),  m(std::move(layer.m)), dm(std::move(lay/;"	f	class:Layer
+Layer	incsrc/NeuralNetwork.cpp	/^Layer::Layer(const Layer& layer):out(layer.out),dout(layer.dout),m(layer.m),dm(layer.dm)$/;"	f	class:Layer
+Layer	incsrc/NeuralNetwork.cpp	/^Layer::Layer(int i, int o):out(o),dout(o),m(o,i),dm(o,i)$/;"	f	class:Layer
+Layer	incsrc/NeuralNetwork.h	/^class Layer$/;"	c
+Mat	incsrc/Algebra.cpp	/^Mat::Mat()$/;"	f	class:Mat
+Mat	incsrc/Algebra.cpp	/^Mat::Mat(Mat&& mat)$/;"	f	class:Mat
+Mat	incsrc/Algebra.cpp	/^Mat::Mat(const Mat& mat)$/;"	f	class:Mat
+Mat	incsrc/Algebra.cpp	/^Mat::Mat(int row,int col)$/;"	f	class:Mat
+Mat	incsrc/Algebra.h	/^class Mat$/;"	c
+Neural-Network	README.md	/^# Neural-Network$/;"	c
+Vec	incsrc/Algebra.cpp	/^Vec::Vec()$/;"	f	class:Vec
+Vec	incsrc/Algebra.cpp	/^Vec::Vec(Vec&& vec)$/;"	f	class:Vec
+Vec	incsrc/Algebra.cpp	/^Vec::Vec(const Vec& vec)$/;"	f	class:Vec
+Vec	incsrc/Algebra.cpp	/^Vec::Vec(int size)$/;"	f	class:Vec
+Vec	incsrc/Algebra.h	/^class Vec$/;"	c
+all	makefile	/^all:	directories $(prog)$/;"	t
+alpha	incsrc/NeuralNetwork.h	/^    float alpha=0.15f;$/;"	m	class:FNN	typeref:typename:float
+backwardPass	incsrc/NeuralNetwork.cpp	/^Vec FNN::backwardPass(float(*act)(float),Vec& v)$/;"	f	class:FNN	typeref:typename:Vec
+backwardPass	incsrc/NeuralNetwork.cpp	/^void Layer::backwardPass(float(*diffActOut)(float),Vec& in,Vec& din)$/;"	f	class:Layer	typeref:typename:void
+backwardPassButNotInput	incsrc/NeuralNetwork.cpp	/^void FNN::backwardPassButNotInput(float(*act)(float),Vec& v)$/;"	f	class:FNN	typeref:typename:void
+bld/%.o	makefile	/^bld\/%.o:	incsrc\/%.cpp$/;"	t
+classes	makefile	/^classes	=$(shell find incsrc -name *.cpp)$/;"	m
+clean	makefile	/^clean:$/;"	t
+col	incsrc/Algebra.h	/^        int row, col;$/;"	m	class:Mat	typeref:typename:int
+data	incsrc/Algebra.h	/^        float* data;$/;"	m	class:Vec	typeref:typename:float *
+data	incsrc/Algebra.h	/^        float** data;$/;"	m	class:Mat	typeref:typename:float **
+descend	incsrc/NeuralNetwork.cpp	/^void FNN::descend()$/;"	f	class:FNN	typeref:typename:void
+descend	incsrc/NeuralNetwork.cpp	/^void Layer::descend(float alpha)$/;"	f	class:Layer	typeref:typename:void
+diffRootMeanSquare	incsrc/main.cpp	/^Vec diffRootMeanSquare(Vec& target,Vec& output)$/;"	f	typeref:typename:Vec
+diffSigmoidOut	incsrc/NeuralNetwork.cpp	/^float diffSigmoidOut(float f)$/;"	f	typeref:typename:float
+directories	makefile	/^directories:$/;"	t
+dm	incsrc/NeuralNetwork.h	/^    Mat m, dm;$/;"	m	class:Layer	typeref:typename:Mat
+dout	incsrc/NeuralNetwork.h	/^    Vec out, dout;$/;"	m	class:Layer	typeref:typename:Vec
+forwardPass	incsrc/NeuralNetwork.cpp	/^Vec FNN::forwardPass(float(*act)(float))$/;"	f	class:FNN	typeref:typename:Vec
+forwardPass	incsrc/NeuralNetwork.cpp	/^void Layer::forwardPass(float(*act)(float),Vec& in)$/;"	f	class:Layer	typeref:typename:void
+getCol	incsrc/Algebra.cpp	/^int Mat::getCol()$/;"	f	class:Mat	typeref:typename:int
+getDimension	incsrc/Algebra.cpp	/^void Mat::getDimension(int& r, int& c)$/;"	f	class:Mat	typeref:typename:void
+getRow	incsrc/Algebra.cpp	/^int Mat::getRow()$/;"	f	class:Mat	typeref:typename:int
+getSize	incsrc/Algebra.cpp	/^int Vec::getSize()$/;"	f	class:Vec	typeref:typename:int
+getVecSize	incsrc/NeuralNetwork.cpp	/^int Layer::getVecSize()$/;"	f	class:Layer	typeref:typename:int
+halfBackwardPass	incsrc/NeuralNetwork.cpp	/^void Layer::halfBackwardPass(float(*diffActOut)(float),Vec& in)$/;"	f	class:Layer	typeref:typename:void
+initNormal	incsrc/NeuralNetwork.cpp	/^void initNormal(Mat& m)$/;"	f	typeref:typename:void
+initialize	incsrc/NeuralNetwork.cpp	/^void (*Layer::initialize)(Mat& m) = initNormal;$/;"	v	typeref:typename:void (* Layer::)(Mat & m)
+initialize	incsrc/NeuralNetwork.h	/^    static void (*initialize)(Mat& m);$/;"	m	class:Layer	typeref:typename:void (*)(Mat & m)
+input	incsrc/NeuralNetwork.h	/^    Vec input;$/;"	m	class:FNN	typeref:typename:Vec
+layers	incsrc/NeuralNetwork.h	/^	std::vector<Layer> layers;			$/;"	m	class:FNN	typeref:typename:std::vector<Layer>
+load	incsrc/NeuralNetwork.cpp	/^void FNN::load(std::string path)$/;"	f	class:FNN	typeref:typename:void
+load	incsrc/NeuralNetwork.cpp	/^void Layer::load(std::ifstream& input)$/;"	f	class:Layer	typeref:typename:void
+loadWeightsOnly	incsrc/NeuralNetwork.cpp	/^void Layer::loadWeightsOnly(std::istringstream& iss)$/;"	f	class:Layer	typeref:typename:void
+m	incsrc/NeuralNetwork.h	/^    Mat m, dm;$/;"	m	class:Layer	typeref:typename:Mat
+main	incsrc/main.cpp	/^int main()$/;"	f	typeref:typename:int
+objects	makefile	/^objects	=$(patsubst incsrc\/%,bld\/%,$(classes:.cpp=.o))$/;"	m
+operator *	incsrc/Algebra.cpp	/^Mat operator*(float f, Mat& mat)$/;"	f	typeref:typename:Mat
+operator *	incsrc/Algebra.cpp	/^Mat operator*(float f, Mat&& mat)$/;"	f	typeref:typename:Mat
+operator *	incsrc/Algebra.cpp	/^Vec operator*(Mat& mat, Vec& vec)$/;"	f	typeref:typename:Vec
+operator *	incsrc/Algebra.cpp	/^Vec operator*(Mat& mat, Vec&& vec)$/;"	f	typeref:typename:Vec
+operator *	incsrc/Algebra.cpp	/^Vec operator*(Mat&& mat, Vec& vec)$/;"	f	typeref:typename:Vec
+operator *	incsrc/Algebra.cpp	/^Vec operator*(Mat&& mat, Vec&& vec)$/;"	f	typeref:typename:Vec
+operator *	incsrc/Algebra.cpp	/^Vec operator*(Vec& v, float f)$/;"	f	typeref:typename:Vec
+operator *	incsrc/Algebra.cpp	/^Vec operator*(Vec&& vec, float f)$/;"	f	typeref:typename:Vec
+operator *	incsrc/Algebra.cpp	/^Vec operator*(float f, Vec& vec)$/;"	f	typeref:typename:Vec
+operator *	incsrc/Algebra.cpp	/^Vec operator*(float f, Vec&& vec)$/;"	f	typeref:typename:Vec
+operator +	incsrc/Algebra.cpp	/^Vec operator+(Vec& a, Vec& b)$/;"	f	typeref:typename:Vec
+operator +	incsrc/Algebra.cpp	/^Vec operator+(Vec& a, Vec&& b)$/;"	f	typeref:typename:Vec
+operator +	incsrc/Algebra.cpp	/^Vec operator+(Vec&& a, Vec& b)$/;"	f	typeref:typename:Vec
+operator +	incsrc/Algebra.cpp	/^Vec operator+(Vec&& a, Vec&& b)$/;"	f	typeref:typename:Vec
+operator +	incsrc/NeuralNetwork.cpp	/^FNN operator+(FNN& fnn, int outSize)$/;"	f	typeref:typename:FNN
+operator +	incsrc/NeuralNetwork.cpp	/^FNN operator+(FNN&& fnn, int outSize)$/;"	f	typeref:typename:FNN
+operator +=	incsrc/Algebra.cpp	/^void Mat::operator+=(Mat& m)$/;"	f	class:Mat	typeref:typename:void
+operator +=	incsrc/Algebra.cpp	/^void Mat::operator+=(Mat&& m)$/;"	f	class:Mat	typeref:typename:void
+operator -	incsrc/Algebra.cpp	/^Vec operator-(Vec& a, Vec& b)$/;"	f	typeref:typename:Vec
+operator -	incsrc/Algebra.cpp	/^Vec operator-(Vec& a, Vec&& b)$/;"	f	typeref:typename:Vec
+operator -	incsrc/Algebra.cpp	/^Vec operator-(Vec&& a, Vec& b)$/;"	f	typeref:typename:Vec
+operator -	incsrc/Algebra.cpp	/^Vec operator-(Vec&& a, Vec&& b)$/;"	f	typeref:typename:Vec
+operator <<	incsrc/Algebra.cpp	/^std::ostream& operator<<(std::ostream& of, Vec& vec)$/;"	f	typeref:typename:std::ostream &
+operator <<	incsrc/NeuralNetwork.cpp	/^std::ostream& operator<<(std::ostream& os, FNN& f)$/;"	f	typeref:typename:std::ostream &
+operator <<	incsrc/NeuralNetwork.cpp	/^std::ostream& operator<<(std::ostream& os, Layer& l)$/;"	f	typeref:typename:std::ostream &
+operator =	incsrc/Algebra.cpp	/^Mat& Mat::operator=(Mat& m)$/;"	f	class:Mat	typeref:typename:Mat &
+operator =	incsrc/Algebra.cpp	/^Mat& Mat::operator=(Mat&& m)$/;"	f	class:Mat	typeref:typename:Mat &
+operator =	incsrc/Algebra.cpp	/^Vec& Vec::operator=(Vec& vec)$/;"	f	class:Vec	typeref:typename:Vec &
+operator =	incsrc/Algebra.cpp	/^Vec& Vec::operator=(Vec&& vec)$/;"	f	class:Vec	typeref:typename:Vec &
+operator =	incsrc/NeuralNetwork.cpp	/^FNN& FNN::operator=(FNN& fnn)$/;"	f	class:FNN	typeref:typename:FNN &
+operator =	incsrc/NeuralNetwork.cpp	/^FNN& FNN::operator=(FNN&&  fnn)$/;"	f	class:FNN	typeref:typename:FNN &
+operator =	incsrc/NeuralNetwork.cpp	/^Layer& Layer::operator=(Layer& l)$/;"	f	class:Layer	typeref:typename:Layer &
+operator =	incsrc/NeuralNetwork.cpp	/^Layer& Layer::operator=(Layer&& l)$/;"	f	class:Layer	typeref:typename:Layer &
+operator []	incsrc/Algebra.cpp	/^float& Vec::operator[](int i)$/;"	f	class:Vec	typeref:typename:float &
+operator []	incsrc/Algebra.cpp	/^float* Mat::operator[](int i)$/;"	f	class:Mat	typeref:typename:float *
+out	incsrc/NeuralNetwork.h	/^    Vec out, dout;$/;"	m	class:Layer	typeref:typename:Vec
+prog	makefile	/^prog	=NN$/;"	m
+purge	makefile	/^purge: clean$/;"	t
+reset	incsrc/Algebra.cpp	/^void Vec::reset()$/;"	f	class:Vec	typeref:typename:void
+rootMeanSquare	incsrc/main.cpp	/^float rootMeanSquare(Vec& target, Vec& output)$/;"	f	typeref:typename:float
+row	incsrc/Algebra.h	/^        int row, col;$/;"	m	class:Mat	typeref:typename:int
+save	incsrc/NeuralNetwork.cpp	/^void FNN::save(std::string path)$/;"	f	class:FNN	typeref:typename:void
+save	incsrc/NeuralNetwork.cpp	/^void Layer::save(std::ofstream& output)$/;"	f	class:Layer	typeref:typename:void
+setLearningRate	incsrc/NeuralNetwork.cpp	/^void FNN::setLearningRate(float f)$/;"	f	class:FNN	typeref:typename:void
+setMatrixRandomFunc	incsrc/NeuralNetwork.cpp	/^void FNN::setMatrixRandomFunc(void(*init)(Mat&))$/;"	f	class:FNN	typeref:typename:void
+sigmoid	incsrc/NeuralNetwork.cpp	/^float sigmoid(float f)$/;"	f	typeref:typename:float
+size	incsrc/Algebra.h	/^        int size;$/;"	m	class:Vec	typeref:typename:int
+~Layer	incsrc/NeuralNetwork.cpp	/^Layer::~Layer()$/;"	f	class:Layer
+~Mat	incsrc/Algebra.cpp	/^Mat::~Mat()$/;"	f	class:Mat
+~Vec	incsrc/Algebra.cpp	/^Vec::~Vec()$/;"	f	class:Vec

@@ -41,6 +41,7 @@ float rootMeanSquare(Vec& target, Vec& output)
 
 int main()
 {
+
   int epoch = 100;
 
   int inputSize = 24*24;
@@ -133,6 +134,9 @@ int main()
   avgError = avgError/noLines;
 
   std::cout << "----------------***----------------\navgError : " << avgError << std::endl;
+
+  std::string path("res/weights");
+  fnn.save(path);
  
   return 0; 
 }
