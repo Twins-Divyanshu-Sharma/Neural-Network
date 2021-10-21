@@ -6,6 +6,9 @@
 #include "Algebra.h"
 #include <vector>
 #include <random>
+#include <fstream>
+#include <string>
+#include <sstream>
 
 #define EXP 2.17128128
 
@@ -41,6 +44,10 @@ public:
     friend std::ostream& operator<<(std::ostream&,Layer&);
 
     void descend(float alpha);
+
+    void save(std::ofstream&);
+    void load(std::ifstream&);
+    void loadWeightsOnly(std::istringstream&);
 };
 
 class FNN
@@ -60,6 +67,7 @@ public:
     FNN(Vec&);
     FNN(FNN&);
     FNN(FNN&&);
+    FNN(std::string path);  // load from file
     FNN& operator=(FNN&);
     FNN& operator=(FNN&&);
 
@@ -78,7 +86,8 @@ public:
 
     void setLearningRate(float);
 
-    
+    void save(std::string path); 
+    void load(std::string path);
 };
 
 #endif

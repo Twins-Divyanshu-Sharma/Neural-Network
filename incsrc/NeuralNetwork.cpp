@@ -169,6 +169,56 @@ void Layer::descend(float alpha)
     m += -alpha * dm;
 }
 
+void Layer::save(std::ofstream& output)
+{
+    int row = m.getRow();
+    int col = m.getCol();
+    output << row << " " << col << std::endl;  
+    for(int r=0; r<row; r++)
+    {
+        for(int c=0; c<col; c++)
+        {
+            output << m[r][c] << " ";
+        }
+    }
+    output << std::endl;
+}
+
+void Layer::load(std::ifstream& input)
+{
+   int row=0, col=0;
+   std::string line;
+   std::getline(input,line);
+   std::istringstream rcLine(line);
+   rcLine >> row >> col;
+   if(m.getRow() != row || m.getCol() != col)
+   {
+       m = Mat(row,col);
+   }
+    
+   std::getline(input,line);
+   std::istringstream weightsLine(line);
+   for(int r=0; r<row; r++)
+   {
+       for(int c=0; c<col; c++)
+       {
+           weightsLine >> m[r][c];
+       }
+   }
+   
+}
+
+void Layer::loadWeightsOnly(std::istringstream& iss)
+{
+   for(int r=0; r<m.getRow(); r++)
+   {
+        for(int c=0; c<m.getCol(); c++)
+        {
+            iss >> m[r][c];
+        }
+   }
+}
+
 FNN::FNN(Vec& v) : input(v)
 {}
 
@@ -382,4 +432,46 @@ void FNN::descend()
 FNN::FNN()
 {
 
+}
+
+void FNN::save(std::string path)
+{
+    std::ofstream output(path);
+    for(int i=0; i<layers.size(); i++)
+    {
+        layers[i].save(output);
+    }
+}
+
+void FNN::load(std::string path)
+{
+    std::ifstream input(path);
+    for(int i=0; i<layers.size(); i++)
+    {
+        layers[i].load(input);
+    }
+}
+
+FNN::FNN(std::string path) : input(0)
+{
+    std::ifstream inputFile(path);
+    std::vector<int> dimensions; 
+    std::string line;
+    int row, col;
+    bool firstTime = true;
+
+    while(std::getline(inputFile,line))
+    {
+        std::istringstream rcLine(line); 
+        rcLine >> row >> col;
+        if(firstTime)
+        {
+            firstTime = false;
+            input = Vec(col);
+        }
+        layers.push_back(Layer(col,row)); // col is input, row is output
+        std::getline(inputFile,line);
+        std::istringstream weightsLine(line);
+        layers.back().loadWeightsOnly(weightsLine);
+    }
 }
