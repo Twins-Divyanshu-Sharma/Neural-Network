@@ -6,6 +6,9 @@
 #include "Algebra.h"
 #include <vector>
 #include <random>
+#include <fstream>
+#include <string>
+#include <sstream>
 
 #define EXP 2.17128128
 
@@ -14,7 +17,24 @@ float diffSigmoidOut(float);
 
 void initNormal(Mat& m);
 
+Vec diffRootMeanSquare(Vec& target,Vec& output);
+float rootMeanSquare(Vec& target, Vec& output);
 
+namespace dataset
+{
+
+    int reverseInt(int i);
+
+    int getNextDatasetNum(std::ifstream& file);
+
+    void getConfig(std::ifstream& inp, int& magicNo, int& totalImages, int& row, int& col);
+
+    void getLabelConfig(std::ifstream& file, int& magicNo, int& totalLabels);
+
+    Vec getNextDatasetImage(std::ifstream& file, int row, int col);
+
+    int getNextDatasetLabel(std::ifstream& file);
+}
 
 class Layer
 {
@@ -39,6 +59,12 @@ public:
     int getVecSize();
 
     friend std::ostream& operator<<(std::ostream&,Layer&);
+
+    void descend(float alpha);
+
+    void save(std::ofstream&);
+    void load(std::ifstream&);
+    void loadWeightsOnly(std::istringstream&);
 };
 
 class FNN
@@ -46,6 +72,14 @@ class FNN
 private:
 	std::vector<Layer> layers;			
     FNN();
+    float alpha=0.15f;
+
+    void descend();
+    float (*activation)(float) = sigmoid;
+    float (*diffActivation)(float) = diffSigmoidOut;
+    Vec (*diffError)(Vec&,Vec&) = diffRootMeanSquare;
+    float (*errorFunc)(Vec&,Vec&) = rootMeanSquare;
+
 public:
     Vec input;
     
@@ -54,6 +88,7 @@ public:
     FNN(Vec&);
     FNN(FNN&);
     FNN(FNN&&);
+    FNN(std::string path);  // load from file
     FNN& operator=(FNN&);
     FNN& operator=(FNN&&);
 
@@ -65,10 +100,24 @@ public:
     friend std::ostream& operator<<(std::ostream&, FNN&);
 
     Vec forwardPass(float(*act)(float));
-    Vec backwardPass(float(*act)(float),Vec&);
-    void backwardPassButNotInput(float(*act)(float),Vec&);
+    Vec backwardPass(float(*diffAct)(float),Vec&);
+    void backwardPassButNotInput(float(*diffAct)(float),Vec&);
     
     void setMatrixRandomFunc(void(*init)(Mat&));
+
+    void setLearningRate(float);
+
+    void save(std::string path); 
+    void load(std::string path);
+    
+    void setActivation(float (*act)(float));
+    void setDiffActivation(float (*diffAct)(float));
+    void setErrorFunc(float (*error)(Vec&,Vec&));
+    void setDiffError(Vec (*diffError)(Vec&,Vec&));
+
+    void train(float epoch, std::string imagePath, std::string labelPath, int show);
+    void test(std::string imagePath, std::string labelPath);
+    
 };
 
 #endif

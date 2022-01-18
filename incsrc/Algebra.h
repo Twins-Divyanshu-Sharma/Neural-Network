@@ -39,6 +39,10 @@ class Vec
 
         friend Vec operator*(Vec&, float);
         friend Vec operator*(Vec&&, float);
+
+        void reset();
+
+        friend std::ostream& operator<<(std::ostream&, Vec&);
 };
 
 class Mat
@@ -67,6 +71,12 @@ class Mat
         friend Vec operator*(Mat&,Vec&&);
         friend Vec operator*(Mat&&,Vec&);
         friend Vec operator*(Mat&&,Vec&&);
+
+        friend Mat operator*(float, Mat&);
+        friend Mat operator*(float, Mat&&);
+
+        void operator+=(Mat&);
+        void operator+=(Mat&&);
 };
 
 #endif

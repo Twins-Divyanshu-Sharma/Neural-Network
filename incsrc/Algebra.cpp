@@ -255,6 +255,21 @@ Vec operator*(Vec&& vec, float f)
     return std::move(vec);
 }
 
+void Vec::reset()
+{
+    for(int i=0; i<size; i++)
+        data[i] = 0;
+}
+
+std::ostream& operator<<(std::ostream& of, Vec& vec)
+{
+    for(int i=0; i<vec.getSize(); i++)
+    {
+        of << vec[i] << " ";
+    }
+    return of;
+}
+
 Mat::Mat()
 {
     row =0; col=0;
@@ -445,3 +460,47 @@ float* Mat::operator[](int i)
         std::cerr<<"out of bounds exception for row no "<<i<<std::endl;
 }
 
+Mat operator*(float f, Mat& mat)
+{
+   Mat ret(mat.getRow(),mat.getCol());
+   for(int i=0; i<mat.getRow(); i++) 
+       for(int j=0; j<mat.getCol(); j++)
+            ret[i][j] = mat[i][j] * f;
+
+   return ret;
+   
+}
+
+Mat operator*(float f, Mat&& mat)
+{
+    for(int i=0; i<mat.getRow(); i++)
+        for(int j=0; j<mat.getCol(); j++)
+            mat[i][j] = mat[i][j] * f;
+
+    return std::move(mat);
+}
+
+
+void Mat::operator+=(Mat& m)
+{
+   if(m.row != row || m.col != col)
+       std::cerr << "Incompatible matrix size for += " << std::endl;
+   else
+   {
+       for(int i=0; i<row; i++)
+           for(int j=0; j<col; j++)
+               data[i][j] += m[i][j];
+   }
+}
+
+void Mat::operator+=(Mat&& m)
+{
+    if(m.row != row || m.col != col)
+       std::cerr << "Incompatible matrix size for += " << std::endl;
+   else
+   {
+       for(int i=0; i<row; i++)
+           for(int j=0; j<col; j++)
+               data[i][j] += m[i][j];
+   }
+}

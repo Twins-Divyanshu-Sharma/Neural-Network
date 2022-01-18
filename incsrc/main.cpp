@@ -1,11 +1,23 @@
 #include "NeuralNetwork.h"
+#include <fstream>
+#include <string>
+#include <sstream>
 
 int main()
 {
-  FNN f(2);
-    std::cout << "starts" << std::endl;
-    f = f+3+4+2+10+11;
-    std::cout << "ends" << std::endl;
-    f.print();
+
+  int epoch = 2;
+
+  int inputSize = 28*28;
+  int outputSize = 10;
+
+  FNN fnn(inputSize); // construct
+  fnn.setMatrixRandomFunc(initNormal); // set normal function
+
+  fnn = fnn + 50 + 20 + outputSize;
+    
+  fnn.train(epoch,"res/trainImages", "res/trainLabels", 1); 
+  fnn.test("res/trainImages","res/trainLabels");
+
   return 0; 
 }
