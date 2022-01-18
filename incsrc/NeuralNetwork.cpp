@@ -649,7 +649,7 @@ void FNN::train(float epoch, std::string imagePath, std::string labelPath, int s
 }
 
 
-void FNN::test(std::string imagePath, std::string labelPath)
+void FNN::test(std::string imagePath, std::string labelPath, int show)
 {
 
     
@@ -690,7 +690,8 @@ void FNN::test(std::string imagePath, std::string labelPath)
           input = dataset::getNextDatasetImage(images,row,col);
  
           Vec output = forwardPass(activation);     
-          std::cout << "[" << targetIndex << "] : " << output << std::endl;
+          if(show)
+             std::cout << "[" << targetIndex << "] : " << output << std::endl;
           float error = errorFunc(target,output);
 
           errorPerNumber[targetIndex] += error;
