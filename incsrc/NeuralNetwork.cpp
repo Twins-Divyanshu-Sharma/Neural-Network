@@ -17,10 +17,38 @@
  */
 #include "NeuralNetwork.h"
 
-int Layer::getVecSize()
+
+Vec diffRootMeanSquare(Vec& target,Vec& output)
 {
-    return out.getSize();
+    if(target.getSize() != output.getSize())
+    {
+        std::cerr << "Vector size does not match for rms" << std::endl;
+        return target;
+    }
+    else
+    {
+        Vec res(target.getSize());
+        for(int i=0; i<target.getSize(); i++)
+        {
+            res[i] = -2*(target[i] - output[i]);
+        }
+        return res;
+    }
 }
+
+
+
+float rootMeanSquare(Vec& target, Vec& output)
+{
+    float error = 0;
+    for(int i=0; i<target.getSize(); i++)
+    {
+        float er = target[i] - output[i];
+        error += er*er;
+    }
+    return sqrt(error);
+}
+
 float sigmoid(float f)
 {
     return (1.0f/(1.0f + pow(EXP,-f)));
@@ -49,6 +77,65 @@ void initNormal(Mat& m)
     }
 }
 
+
+int dataset::reverseInt(int i)
+{
+    unsigned char c1, c2, c3, c4;
+
+    c1 = i & 255;
+    c2 = (i >> 8) & 255;
+    c3 = (i >> 16) & 255;
+    c4 = (i >> 24) & 255;
+
+    return ((int)c1 << 24) + ((int)c2 << 16) + ((int)c3 << 8) + c4;
+
+}
+
+int dataset::getNextDatasetNum(std::ifstream& file)
+{
+   int number=0;
+   file.read((char*)&number,sizeof(number));
+   return reverseInt(number);
+}
+
+void dataset::getConfig(std::ifstream& inp, int& magicNo, int& totalImages, int& row, int& col)
+{
+    magicNo = getNextDatasetNum(inp);
+    totalImages = getNextDatasetNum(inp);
+    row = getNextDatasetNum(inp);
+    col = getNextDatasetNum(inp);
+}
+
+void dataset::getLabelConfig(std::ifstream& file, int& magicNo, int& totalLabels)
+{
+   magicNo = getNextDatasetNum(file);
+   totalLabels = getNextDatasetNum(file);
+}
+
+Vec dataset::getNextDatasetImage(std::ifstream& file, int row, int col)
+{
+    Vec ret(row*col);
+    unsigned char temp=0;
+    for(int i=0; i<row; i++)
+    {
+        for(int j=0; j<col; j++)
+        {
+            file.read((char*)&temp,sizeof(temp));
+            int pixel = (int)temp;
+            ret[i*col + j] = (float)pixel/255.0f;
+        }
+    }
+    return ret;
+}
+
+int dataset::getNextDatasetLabel(std::ifstream& file)
+{
+  unsigned char temp = 0;
+  file.read((char*)&temp,sizeof(temp));
+  int value = (int)temp;
+  return temp;
+}
+
 void (*Layer::initialize)(Mat& m) = initNormal;
 
 
@@ -57,6 +144,13 @@ Layer::Layer()
 
 }
 
+
+
+
+int Layer::getVecSize()
+{
+    return out.getSize();
+}
 
 Layer::Layer(int i, int o):out(o),dout(o),m(o,i),dm(o,i)
 {
@@ -475,3 +569,148 @@ FNN::FNN(std::string path) : input(0)
         layers.back().loadWeightsOnly(weightsLine);
     }
 }
+
+
+
+void FNN::setActivation(float (*act)(float))
+{
+    activation = act;
+}
+
+void FNN::setDiffActivation(float (*diffAct)(float))
+{
+    diffActivation = diffAct;
+}
+
+void FNN::setErrorFunc(float (*error)(Vec&,Vec&))
+{
+   errorFunc = error; 
+}
+
+void FNN::setDiffError(Vec (*diffErrorFnc)(Vec&,Vec&))
+{
+    diffError = diffErrorFnc;
+}
+
+void FNN::train(float epoch, std::string imagePath, std::string labelPath, int show)
+{
+
+
+  std::ifstream images;
+  std::ifstream labels;
+
+  int magicNo,totalImages,row,col,totalLabels;
+
+  int outputSize = layers.back().getVecSize();
+
+  Vec target(outputSize);
+
+  while(epoch--)
+  {
+      if(show)
+        std::cout << "-------------------------" << epoch << "------------------------ " << std::endl;
+      images.open(imagePath);
+      labels.open(labelPath);
+          
+        dataset::getConfig(images,magicNo,totalImages,row,col);
+        // magic no should be 2051
+
+        dataset::getLabelConfig(labels,magicNo,totalLabels);
+        // magic no should be 2049
+
+     int imagesLeft = totalImages;
+      while(imagesLeft--)
+      {
+          if(imagesLeft%1000 == 0 && show)
+          {
+             std::cout << totalImages - imagesLeft << " " << std::flush;
+          }
+          int targetIndex = dataset::getNextDatasetLabel(labels);
+          target.reset();
+          target[targetIndex] = 1;
+
+          input = dataset::getNextDatasetImage(images,row,col);
+          
+          Vec output = forwardPass(activation);    
+          Vec diffErrorVec = diffError(target,output);
+          float error = rootMeanSquare(target,output);
+          backwardPassButNotInput(diffActivation,diffErrorVec); 
+
+          
+
+      }
+      if(show)
+        std::cout << "\n-------------------" << std::endl;
+      images.close();
+      labels.close(); 
+  }
+
+
+}
+
+
+void FNN::test(std::string imagePath, std::string labelPath)
+{
+
+    
+  std::ifstream images;
+  std::ifstream labels;
+
+  int magicNo,totalImages,row,col,totalLabels;
+
+  int outputSize = layers.back().getVecSize();
+
+  Vec target(outputSize);
+  float avgError = 0;
+
+
+  images.open(imagePath);
+  labels.open(labelPath);
+          
+  dataset::getConfig(images,magicNo,totalImages,row,col);
+    // magic no should be 2051
+
+   dataset::getLabelConfig(labels,magicNo,totalLabels);
+    // magic no should be 2049
+    
+  float errorPerNumber[10];
+  int count[10];
+  for(int i=0; i<10; i++)
+  {
+      errorPerNumber[i] = 0;
+      count[i] = 0;
+  }
+  int noLines = 0;
+  while(totalImages--)
+  {
+          int targetIndex = dataset::getNextDatasetLabel(labels);
+          target.reset();
+          target[targetIndex] = 1;
+
+          input = dataset::getNextDatasetImage(images,row,col);
+ 
+          Vec output = forwardPass(activation);     
+          std::cout << "[" << targetIndex << "] : " << output << std::endl;
+          float error = errorFunc(target,output);
+
+          errorPerNumber[targetIndex] += error;
+          count[targetIndex]++;
+
+          avgError += error;
+          noLines++;
+  }
+  images.close();
+  labels.close();
+
+  avgError = avgError/noLines;
+
+  std::cout << "----------------***----------------\navgError : " << avgError << std::endl;
+  std::cout << " error per number " << std::endl;
+  for(int i=0; i<10; i++)
+  {
+      std::cout << i << " : " << errorPerNumber[i]/count[i] << std::endl;
+  }
+
+}
+
+
