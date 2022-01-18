@@ -17,7 +17,7 @@ int main()
   fnn = fnn + 50 + 20 + outputSize;
     
   fnn.train(epoch,"res/trainImages", "res/trainLabels", 1); 
-  fnn.test("res/trainImages","res/trainLabels");
+  fnn.test("res/trainImages","res/trainLabels",1);
 
   return 0; 
 }

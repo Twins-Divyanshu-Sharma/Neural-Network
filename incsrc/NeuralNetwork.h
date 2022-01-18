@@ -116,7 +116,7 @@ public:
     void setDiffError(Vec (*diffError)(Vec&,Vec&));
 
     void train(float epoch, std::string imagePath, std::string labelPath, int show);
-    void test(std::string imagePath, std::string labelPath);
+    void test(std::string imagePath, std::string labelPath, int show);
     
 };
 
